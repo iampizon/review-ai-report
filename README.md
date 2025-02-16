@@ -51,4 +51,11 @@
   - 일단, 한번 분석된 결과는 캐싱하게 하여 동일 범위의 조회일 경우 캐싱된 데이터로 보고서를 생성하게 해둠.
   - 이 후 Throttling exception 발생시 AWS region를 변경하여 retry 하는 로직 구현 예정.
 
+## TODO
+- Cloudformation 배포
+  - 구현중
+- QuickSight 보고서 PDF 출력 기능 구현
+  - 구현중
+- DEMO 웹사이트 가운데 창 크기 조정 가능하도록
+  - 완료함
 
