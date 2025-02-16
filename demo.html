@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>울티마 온라인 리뷰 조회 & 보고서 생성 DEMO</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f3f3;
+            color: #16191f;
+        }
+        .container {
+            display: flex;
+            flex-direction: column; /* 변경: 세로 방향으로 배치 */
+            min-height: 100vh; /* 최소 높이를 뷰포트 높이로 설정 */
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .date-picker {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .date-picker input[type="date"] {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+        /* 버튼 스타일 개선 */
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 10px; /* 버튼 사이 간격 추가 */
+        }
+        /* 업데이트 버튼 스타일 */
+        #update-board {
+            width: 140px;
+            background-color: #007bff; /* AWS 파란색 */
+            color: #ffffff;
+        }
+        #update-board:hover {
+            background-color: #0056b3; /* 호버 시 더 어두운 파란색 */
+        }
+        /* 초기화 버튼 스타일 */
+        #build-report {
+            width: 140px;
+            background-color: #6c757d; /* 회색 */
+            color: #ffffff;
+        }
+        #build-report:hover {
+            background-color: #5a6268; /* 호버 시 더 어두운 회색 */
+        }
+        table {
+            width: 800px;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0 1px 1px rgba(0,28,36,0.3);
+        }
+        th, td {
+            padding: 5px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eaeded;
+            font-size: 12px;
+        }
+        th {
+            background-color: #fafafa;
+            font-weight: bold;
+        }
+        .table-title {
+            width:800px;
+            padding: 15px;
+            font-size:30px;
+            font-weight: bold;
+            background-color: #fafafa;
+            box-shadow: 0 1px 1px rgba(0,28,36,0.3);
+        }
+        .table-date {
+            width:30px;
+            font-size:8px
+        }
+        .table-id {
+            width:30px;
+            font-size:8px;
+        }
+        .split-container {
+        display: flex;
+        width: 100%;
+        height: 100vh;
+        position: relative;
+
+        }
+        
+        .resize-handle {
+            width: 4px;
+            background-color: #eaeded;
+            cursor: col-resize;
+            transition: background-color 0.3s;
+        }
+
+        .resize-handle:hover {
+            background-color: #007bff;
+        }
+
+        .left-panel {
+            flex: 1;
+            padding: 1px;
+            overflow-y: auto;
+            min-width: 200px;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 10px;
+            font-size:13px;
+            border-left: 1px solid #eaeded;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            height: 100vh;
+            min-width: 200px;
+
+        }
+
+        .chart-container {
+            flex: 1;
+            height: 200;
+            padding: 0px;
+            border-bottom: 1px solid #eaeded;
+            overflow-y: auto;
+        }
+
+        .notice-container {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        /* Optional: Add some styling for better visibility */
+        .chart-container, .notice-container {
+            background-color: #ffffff;
+            margin: 5px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .chart-loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .loading-text {
+            margin-top: 8px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Basic Spinner */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Dual Ring Spinner */
+        .dual-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid transparent;
+            border-top: 4px solid #007bff;
+            border-bottom: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+        }
+
+        /* Dots Spinner */
+        .dots-spinner {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dots-spinner div {
+            width: 8px;
+            height: 8px;
+            background-color: #007bff;
+            border-radius: 50%;
+            animation: dots 0.8s ease infinite;
+        }
+
+        .dots-spinner div:nth-child(2) { animation-delay: 0.2s; }
+        .dots-spinner div:nth-child(3) { animation-delay: 0.4s; }
+
+        /* AWS Console style spinner */
+        .aws-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #eaeded;
+            border-top: 2px solid #232f3e;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes dots {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.5); opacity: 0.5; }
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="split-container">
+    <div class="left-panel">
+            <div class="main-content">
+                <div class="date-picker">
+                <table>
+                    <tr>
+                        <td class="table-title">
+                            울티마 온라인 리뷰 조회 & 보고서 생성 DEMO
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>범위 : </b><input type="date" id="start-date" placeholder="시작 날짜" >
+                            <input type="date" id="end-date" placeholder="마지막 날짜">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="update-board" class="button">조회하기</button>
+                            <button id="build-report" class="button">보고서 생성</button>
+                        </td>
+                    </tr>
+
+                </table>
+                </div>
+                <div>
+
+
+
+                <table id="board">
+        
+                    <thead>
+                        <tr>
+                            <th>리뷰</th>
+                            <th>ID</th>
+                            <th>일자</th>
+                        </tr>
+                        <tr></tr><td colspan="3">
+                            <div class="loading-container" style="display: none;">
+                                <div class="aws-spinner"></div>
+                                <div class="loading-text">조회 중...</div>
+                            </div>
+                        </td></tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr><td colspan="3">
+                            범위 설정 후 조회하기 버튼을 클릭하세요.
+                            </div>
+                        </td></tr>
+                        <!-- 게시판 내용이 여기에 동적으로 추가됩니다 -->
+                    </tbody>
+                </table>
+                </div>
+        </div>
+    </div>
+
+    <div class="resize-handle"></div>
+
+    <div class="right-panel">
+        <div id="chart-container" class="chart-container">
+            <!-- Notices will go here -->
+            <div class="chart-loading-container" style="display: none;">
+                <div class="aws-spinner"></div>
+                <div class="loading-text">보고서를 생성 중 입니다...</div>
+            </div>
+
+        </div>
+        <div id="notice-container" class="notice-container">
+            <!-- Add charts or additional content here -->
+        </div>
+        <div id="chart-result" class="chart-container">
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function() {
+
+            let isResizing = false;
+            let lastDownX = 0;
+            
+            $('.resize-handle').on('mousedown', function(e) {
+                isResizing = true;
+                lastDownX = e.clientX;
+                
+                // Add event listeners
+                $(document).on('mousemove', handleMouseMove);
+                $(document).on('mouseup', stopResize);
+            });
+            
+            function handleMouseMove(e) {
+                if (!isResizing) return;
+                
+                const container = $('.split-container');
+                const leftPanel = $('.left-panel');
+                const rightPanel = $('.right-panel');
+                
+                const containerWidth = container.width();
+                const newX = e.clientX;
+                const leftWidth = newX;
+                
+                // Set minimum widths
+                if (leftWidth < 200 || (containerWidth - leftWidth) < 200) return;
+                
+                leftPanel.css('flex', '0 0 ' + leftWidth + 'px');
+                rightPanel.css('flex', '1');
+            }
+            
+            function stopResize() {
+                isResizing = false;
+                $(document).off('mousemove', handleMouseMove);
+                $(document).off('mouseup', stopResize);
+            }
+           
+
+            $('#start-date').val('2025-04-01');
+            $('#end-date').val('2025-04-30');
+
+            // 업데이트 버튼 클릭 이벤트
+            $('#update-board').click(function() {
+
+
+                var startDate = $('#start-date').val();
+                var endDate = $('#end-date').val();
+
+                if (!startDate || !endDate) {
+                    alert('시작 날짜와 마지막 날짜를 모두 선택해주세요.');
+                    return;
+                }
+
+                // Show progress bar and disable button
+                var tbody = $('#board tbody');
+                tbody.empty();
+
+                $('.loading-container').show();
+                $('#update-board').prop('disabled', true);
+
+                // AWS Lambda 함수 호출
+                $.ajax({
+                    url: 'https://YOURS.execute-api.ap-northeast-2.amazonaws.com/start/logs', // 실제 API Gateway 엔드포인트로 변경
+                    type: 'POST',
+                    data: JSON.stringify({
+                        startDate: startDate,
+                        endDate: endDate
+                    }),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function(response) {
+
+                        $('.loading-container').hide();
+                        $('#update-board').prop('disabled', false);
+
+                        updateBoard(response);
+
+                    
+                    },
+                    error: function(error) {
+                        // Handle error
+                        $('.loading-container').hide();
+                        $('#update-board').prop('disabled', false);
+                        tbody.append('<tr><td colspan="3" style="text-align: center; color: red;">Error: ' + error + '</td></tr>');            }
+                });
+            });
+
+            // 초기화 버튼 클릭 이벤트
+            $('#build-report').click(function() {
+            });
+
+            function updateBoard(response) {
+                console.log(response.body);
+
+                try {
+                    const data = JSON.parse(response.body);   
+
+                    console.log(data.items);
+
+                    if (!data || !data.items || !Array.isArray(data.items) || !data.items[0]) {
+                        console.error('Invalid data structure');
+                        return;
+                    }
+
+                    const reviews = data.items;
+                    var tbody = $('#board tbody');
+                    tbody.empty();
+
+                    reviews.forEach(item => {
+                        if (item && item.userid && item.date && item.rating && item.review) {
+                            var row = $('<tr>');
+
+                            //row.append($('<td>').text('★'.repeat(parseInt(item.rating))));
+                            row.append($('<td>').text(item.review));
+                            row.append($('<td class=table-id>').text(item.userid));
+                            row.append($('<td class=table-date>').text(item.date.slice(5)));
+                            tbody.append(row);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error updating board:', error);
+                }
+            }
+
+            document.getElementById('build-report').addEventListener('click', async () => {
+
+            // Show the right panel
+            $('.right-panel').show();
+
+            var startDate = $('#start-date').val();
+            var endDate = $('#end-date').val();
+
+            const resultsDiv = document.getElementById('notice-container');
+            const chartDiv = document.getElementById('chart-result');
+            $('.chart-loading-container').show();
+            resultsDiv.innerHTML = ">> Bedrock 으로 분석을 시작합니다.";
+            
+            try {
+                // Step Functions 실행 시작
+                const startResponse = await fetch('https://YOURS.execute-api.ap-northeast-2.amazonaws.com/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        input: JSON.stringify({
+                        startDate: startDate,
+                        endDate: endDate})
+                    }) // 필요한 입력값 전달
+                });
+
+                if (!startResponse.ok) {
+                    throw new Error(`Failed to start workflow: ${startResponse.status}`);
+                }
+
+                const { executionArn } = await startResponse.json();
+                
+                //resultsDiv.innerHTML += "<br>>> 분석을 진행 중입니다.";
+
+                // 상태 확인 (폴링)
+                let isRunning = true;
+                count = 0;
+                while (isRunning) {
+                    const statusResponse = await fetch(`https://YOURS.execute-api.ap-northeast-2.amazonaws.com/start/check?executionArn=${executionArn}`);
+                    const data = await statusResponse.json();
+                    const statusData = JSON.parse(data.body);
+                    
+                    if (statusData.status === "SUCCEEDED") {
+                        const output = JSON.parse(statusData.output);
+                        const outputBody = JSON.parse(output.body);
+                        const qurl = outputBody.EmbedUrl;
+
+ 
+                        resultsDiv.innerHTML += `<br>>> 레포트 생성이 완료됐습니다.<br>`;
+                        $('.chart-loading-container').hide();
+                        $('.chart-result').show();
+                        chartDiv.innerHTML = `<iframe width="1280" height="1200" src="${outputBody.EmbedUrl}"></iframe>`;
+                        
+                        isRunning = false;
+                    } else if (statusData.status === "FAILED") {
+                        resultsDiv.innerHTML += `<br>>> 보고서 분석이 중단됐습니다.( ThrottlingException : Bedrock 사용량 초과, 잠시 후 다시 시도해주세요. )`;
+                        $('.chart-loading-container').hide();
+                        isRunning = false;
+                    } else {
+                        count = count + 1;
+                        if (count == 1) {
+                            resultsDiv.innerHTML += `<br>>> AI Model : anthropic.claude-3-5-sonnet-20240620-v1:0<br>>> 분석을 진행 중입니다.`;
+                        }
+                        else if (count == 3) {
+                            resultsDiv.innerHTML += `<br>>> 시스템 프롬프트를 생성 중입니다.`;
+                        }
+                        else if (count == 8) {
+                            resultsDiv.innerHTML += `<br>>> 시스템 프롬프트를 생성했습니다.<br>>> 분석을 진행 중입니다.`;
+                        }
+                        else if (count == 20) {
+                            resultsDiv.innerHTML += `<br>>> 분석이 완료됐습니다.<br>>> QuickSight 레포트를 생성합니다.`;
+
+                        } else {
+
+                            resultsDiv.innerHTML += ` . .`;
+
+                        }
+                        
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
+                    
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `Error: ${error.message}`;
+            }
+        });
+
+    });
+
+
+    </script>
+</body>
+</html>
