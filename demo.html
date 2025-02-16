@@ -97,7 +97,7 @@
         display: flex;
         width: 100%;
         height: 100vh;
-        position: relative;
+
 
         }
         
@@ -120,7 +120,7 @@
         }
         
         .right-panel {
-            flex: 1;
+            flex: 1; 
             padding: 10px;
             font-size:13px;
             border-left: 1px solid #eaeded;
@@ -128,7 +128,7 @@
             flex-direction: column;
             height: 100vh;
             min-width: 200px;
-
+            overflow-y: auto;
         }
 
         .chart-container {
@@ -377,7 +377,7 @@
 
                 // AWS Lambda 함수 호출
                 $.ajax({
-                    url: 'https://YOURS.execute-api.ap-northeast-2.amazonaws.com/start/logs', // 실제 API Gateway 엔드포인트로 변경
+                    url: 'https://iw56yf3kj0.execute-api.ap-northeast-2.amazonaws.com/start/logs', // 실제 API Gateway 엔드포인트로 변경
                     type: 'POST',
                     data: JSON.stringify({
                         startDate: startDate,
@@ -400,10 +400,6 @@
                         $('#update-board').prop('disabled', false);
                         tbody.append('<tr><td colspan="3" style="text-align: center; color: red;">Error: ' + error + '</td></tr>');            }
                 });
-            });
-
-            // 초기화 버튼 클릭 이벤트
-            $('#build-report').click(function() {
             });
 
             function updateBoard(response) {
@@ -454,7 +450,7 @@
             
             try {
                 // Step Functions 실행 시작
-                const startResponse = await fetch('https://YOURS.execute-api.ap-northeast-2.amazonaws.com/start', {
+                const startResponse = await fetch('https://iw56yf3kj0.execute-api.ap-northeast-2.amazonaws.com/start', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -476,7 +472,7 @@
                 let isRunning = true;
                 count = 0;
                 while (isRunning) {
-                    const statusResponse = await fetch(`https://YOURS.execute-api.ap-northeast-2.amazonaws.com/start/check?executionArn=${executionArn}`);
+                    const statusResponse = await fetch(`https://iw56yf3kj0.execute-api.ap-northeast-2.amazonaws.com/start/check?executionArn=${executionArn}`);
                     const data = await statusResponse.json();
                     const statusData = JSON.parse(data.body);
                     
@@ -489,6 +485,10 @@
                         resultsDiv.innerHTML += `<br>>> 레포트 생성이 완료됐습니다.<br>`;
                         $('.chart-loading-container').hide();
                         $('.chart-result').show();
+
+                        const rightPanel = $('.right-panel');
+                        rightPanel.css('flex', '0 0 ' + 1280 + 'px');
+                                            
                         chartDiv.innerHTML = `<iframe width="1280" height="1200" src="${outputBody.EmbedUrl}"></iframe>`;
                         
                         isRunning = false;
