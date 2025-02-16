@@ -15,9 +15,7 @@ DEMO 웹사이트의 아키텍처입니다.
 S3와 CloundFront를 통해 호스팅되며, API-Gateway를 통해 3개의 API가 호출됩니다.
 
 - 리뷰 조회 API : GetGameReviewsLogs Lambda를 호출하며 이 Lambda 함수는 DynamoDB에 저장되있는 리뷰글을 조회하여 리턴합니다.
-  
 - 보고서 생성 API : BuildGameReviewReport Step Functions를 호출하며 이 Step Functions는 보고서 생성을 위한 워크플로우를 수행합니다.
-  
 - 보고서 생성 진행상황 조회 API : 보고서 생성 API가 호출되며 Step Functions가 워크플로우를 수행하는 도중 진행 상황을 알려줍니다.
   
 <img src="images/arch-1.png" width=700/>
