@@ -50,6 +50,8 @@
   - 구현중
 - QuickSight 보고서 PDF 출력 기능 구현
   - 구현중
+- 데모 도메인 .aws로 업데이트
+  - 예정
 - DEMO 웹사이트 가운데 창 크기 조정 가능하도록
   - 완료함
 - QuickSight dataset refresh가 24시간에 32회가 hard limit 이어서 하루에 32회 이상 보고서 업데이트 안되던 문제
