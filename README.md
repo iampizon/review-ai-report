@@ -12,7 +12,7 @@ DEMO 설명
 
 ## 아키텍처
 
-<img src="images/arch-1"/>
+<img src="images/arch-1.png"/>
 DEMO 웹사이트의 아키텍처입니다.
 S3와 CloundFront를 통해 호스팅되며, API-Gateway를 통해 3개의 API가 호출됩니다.
 
@@ -20,9 +20,9 @@ S3와 CloundFront를 통해 호스팅되며, API-Gateway를 통해 3개의 API�
 - 보고서 생성 API
 - 보고서 생성 진행상황 조회 API
 
-<img src="images/arch-2"/>
+<img src="images/arch-2.png"/>
 Step Functions 를 호출하는 보고서 생성 API의 상세 아키텍처 입니다.
 
 
-<img src="images/arch-3"/>
+<img src="images/arch-3.png"/>
 전체 아키텍처 입니다.
