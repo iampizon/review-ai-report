@@ -27,7 +27,7 @@ def create_bedrock_client():
 
 def invoke_claude(system_prompt, prompt, client):
     # Model ID for Claude 3.5 Sonnet
-    model_id = "anthropic.claude-3-5-sonnet-20240620-v1:0"
+    model_id = "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
     
     formatted_prompt = prompt
     if system_prompt:
