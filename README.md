@@ -57,7 +57,7 @@
 - QuickSight dataset refresh가 24시간에 32회가 hard limit 이어서 하루에 32회 이상 보고서 업데이트 안되던 문제
   - 완료함 : Spice를 사용하지 않고, Athena에 direct query를 쓰도록 함. 보고서 조회 속도는 약간 느려졌지만 보고서 생성 횟수 제한 없어짐.
 - Bedrock Throttling 문제
-  - input token 수가 클 경우(분석 리뷰가 많은 경우), 보고서 생성이 안되는 경우가 있음. 몇 분간 기다렸다가 하면 되는데, 현재로서는 quota 문제로 해결할 수 없음
+  - input token 수가 클 경우(분석 리뷰가 많은 경우), 보고서 생성이 안되는 경우가 있음. 몇 분간 기다렸다가 하면 되는데, 현재로서는 AWS Internal 계정 quota 문제로 해결할 수 없음
   - 일단, 한번 분석된 결과는 캐싱하게 하여 동일 범위의 조회일 경우 캐싱된 데이터로 보고서를 생성하게 해둠.
-  - 이 후 Throttling exception 발생시 AWS region를 변경하여 retry 하는 로직 구현 예정.
+  - Cross reigion invoke 적용. (좀 나아짐)
 
