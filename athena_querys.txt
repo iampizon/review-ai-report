@@ -1,0 +1,119 @@
+CREATE EXTERNAL TABLE dailyinfo (
+    date STRING,
+    positive INT,
+    negative INT
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/dailyinfo/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+
+CREATE EXTERNAL TABLE negative (
+    main_negative_aspects STRING,
+    main_negative_aspects_value INT
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/negative/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+
+CREATE EXTERNAL TABLE positive (
+    main_positive_aspects STRING,
+    main_positive_aspects_value INT
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/positive/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+CREATE EXTERNAL TABLE suggest (
+    suggested_improvements STRING
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/suggest/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+
+
+CREATE EXTERNAL TABLE summary (
+    summary STRING
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = '\t',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/summary/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+
+CREATE EXTERNAL TABLE summary (
+    summary STRING
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY '\t'  -- 탭 문자로 필드를 구분
+LINES TERMINATED BY '\n'    -- 줄바꿈 문자로 줄을 구분
+LOCATION 's3://my-game-review-result/dataset/summary/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+
+CREATE EXTERNAL TABLE topinfo (
+    topinfo STRING
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/topinfo/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+
+CREATE EXTERNAL TABLE topreview (
+    id STRING,
+    date STRING,
+    review STRING
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/topreview/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
+
+
+CREATE EXTERNAL TABLE totalinfo (
+    category STRING,
+    value STRING
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+    'separatorChar' = ',',
+    'quoteChar' = '"'
+)
+STORED AS TEXTFILE
+LOCATION 's3://my-game-review-result/dataset/totalinfo/'
+TBLPROPERTIES ('skip.header.line.count' = '1');
